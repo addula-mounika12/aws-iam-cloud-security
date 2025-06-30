@@ -37,7 +37,7 @@ Both instances were launched using a Free Tier-eligible Amazon Machine Image (AM
 Creating these two isolated environments allowed me to apply environment-specific access controls later in the project.
 
 ```html
-<img src="https://github.com/addula-mounika12/aws-iam-cloud-security/blob/main/assets/Screenshot%202025-06-20%20160023.png?raw=true" height="80%" width="80%" alt="EC2 instance setup"/>
+![image alt] https://github.com/addula-mounika12/aws-iam-cloud-security/blob/5feb26f8725ecc2e929308645a26ea47fa47466a/assets/Screenshot%202025-06-20%20160023.png alt="EC2 instance setup"/>
 ```
 
 ---
