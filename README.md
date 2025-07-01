@@ -27,39 +27,79 @@ This project demonstrates how I implemented cloud access control using AWS Ident
 
 ### Step 1 & 2: Launching EC2 Instances for Production and Development Environments
 
-To begin this project, I logged into the AWS Management Console and accessed the EC2 service. I launched two EC2 instances:
+The first step in securing a cloud environment is establishing a functional infrastructure with clearly defined environments. In this project, I achieved this by launching two **Amazon EC2 instances**—one for the **production** environment and one for the **development** environment. This separation is a cloud best practice that enables fine-grained access control, safer testing, and more resilient application management.
 
-- **Production Instance**: Named `Mywork-prod-Mounika` and tagged with `Env=production`
-- **Development Instance**: Named `mywork-dev-Mounika` and tagged with `Env=development`
+I began by logging into the **AWS Management Console**, navigating to the **EC2 service**, and selecting the AWS Region geographically closest to my location to optimize latency and resource availability.
 
-Both instances used a Free Tier-eligible AMI and `t2.micro` type. Creating two isolated environments allowed me to apply role-based access using IAM policies later.
+#### 🟢 Production EC2 Instance
+- Instance Name: `Mywork-prod-Mounika`
+- Tag: `Key = Env`, `Value = production`
+- Purpose: Represents the **live environment** used by end users, simulating a real-world production system.
+- Configuration:
+  - **AMI**: Selected a Free Tier-eligible Amazon Linux 2 image
+  - **Instance Type**: `t2.micro` to stay within Free Tier and minimize cost
+  - **Tags**: Added to distinguish this instance as a production asset
+
+#### 🛠️ Development EC2 Instance
+- Instance Name: `mywork-dev-Mounika`
+- Tag: `Key = Env`, `Value = development`
+- Purpose: Serves as a **sandbox environment** for writing, testing, and debugging code without impacting the production system.
+- Configuration mirrored the production setup (AMI and instance type) to ensure compatibility and performance parity
+
+By applying environment-specific **tags**, I set the foundation for IAM policies to differentiate access based on the instance's purpose. This tagging would later allow me to apply **least privilege access** to ensure that IAM users could only interact with the appropriate instance.
+
+This step was crucial in demonstrating the ability to design scalable, role-separated infrastructure and paved the way for enforcing secure access using IAM.
 
 ![EC2 instance setup](https://github.com/addula-mounika12/aws-iam-cloud-security/blob/78d0f6db6822d95d69253558d36fdec967393212/assets/Screenshot%202025-06-20%20160023.png?raw=true)
-
 
 ---
 
 ### Step 3: Creating an IAM Policy to Control Access
 
-Next, I focused on creating a custom IAM policy to ensure an intern could interact only with the development environment. This was essential to applying the principle of least privilege.
+After successfully launching the production and development EC2 instances, the next step was to ensure **controlled, role-based access** to these resources. In a real-world cloud environment, it's critical to prevent unauthorized actions, especially in production systems. To simulate this scenario, I created a **custom IAM policy** that would allow an intern to interact only with the **development** environment while blocking all interaction with the **production** instance.
 
-In the IAM console, I navigated to **Policies > Create policy** and switched to the JSON editor to define a policy that:
-- Allows full EC2 actions only on instances tagged with `Env=development`
-- Grants read-only (describe) access on all EC2 instances
-- Explicitly denies tag creation and deletion on any instances
+I navigated to the **IAM console**, selected **Policies** from the sidebar, and chose **Create Policy**. To achieve fine-grained control, I switched to the **JSON editor**, which provides a structured format for defining permission rules programmatically.
 
-This policy was named `MyWorkDevEnvironmentPolicy` and saved for later use with IAM groups.
+The policy was written to enforce the **principle of least privilege**, and included the following logic:
+
+- ✅ **Full EC2 permissions** (`ec2:*`) were allowed, but **only** on instances tagged with `Env=development`. This ensures the intern could perform necessary operations like start, stop, and reboot on the development instance.
+- 🔍 **Read-only permissions** (`ec2:Describe*`) were granted on **all** EC2 resources, providing visibility without the ability to modify.
+- 🚫 **Explicit deny** permissions were set for sensitive actions like `CreateTags` and `DeleteTags`, further reducing the risk of accidental changes to critical metadata.
+
+Once the policy was defined, I reviewed it carefully and saved it with the name:  
+> `MyWorkDevEnvironmentPolicy`
+
+I also added a clear description to explain its purpose for future auditing and maintenance. This custom policy would later be attached to an IAM group, ensuring any user in that group automatically inherits these scoped permissions.
+
+This step highlighted the power of **resource-level access control** using tags and the flexibility of AWS IAM for designing secure, scalable access frameworks.
 
 ![IAM Policy JSON Editor](https://github.com/addula-mounika12/aws-iam-cloud-security/blob/main/assets/Screenshot%202025-06-20%20163207.png?raw=true)
+
+
+
 ---
 
 ### Step 4: Setting Up an AWS Account Alias
 
-To personalize the AWS login experience and avoid sharing long account IDs, I created a custom AWS account alias. This alias appears in the login URL and makes it easier to share access with interns or other users.
+To improve the clarity and usability of the AWS login process—especially for IAM users like interns or temporary team members—I created a **custom AWS account alias**. By default, AWS generates a complex sign-in URL containing a 12-digit account ID, which is difficult to remember and doesn’t reflect any organizational identity.
 
-I navigated to the **IAM dashboard > Account Alias**, created a recognizable alias, and verified that the login URL reflected the change.
+Creating a recognizable alias transforms this long numeric login link into a user-friendly URL, making it easier to share and access without compromising on security.
+
+#### 🔧 Why It's Useful:
+- Makes AWS sign-in URLs easier to read and remember
+- Enhances professionalism and branding
+- Helps during onboarding by simplifying credential sharing
+
+#### 🛠️ Steps Taken:
+1. Navigated to the **IAM Dashboard** in the AWS Console.
+2. Clicked on the **Account Alias** option from the left-hand menu.
+3. Entered a custom, meaningful alias that represents my AWS environment.
+4. Saved the changes and tested the new sign-in URL.
+This step, although minor in setup time, significantly improves the **user experience** for IAM users and contributes to a clean and organized cloud administration process.
 
 ![Account Alias Setup](https://github.com/addula-mounika12/aws-iam-cloud-security/blob/4f063d96e5f8790dcf50b09bc9d41b21912c66be/assets/Screenshot%202025-06-20%20165645.png?raw=true)
+
+
 
 ---
 
