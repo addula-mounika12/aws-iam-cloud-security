@@ -1,4 +1,4 @@
-# ☁️ Cloud Security with AWS IAM
+# 🔒Role-Based Access Control for EC2 using AWS IAM	
 
 This project demonstrates how I implemented cloud access control using AWS Identity and Access Management (IAM). It simulates a real-world scenario where interns and developers require secure, role-based access to different environments. I used EC2 for infrastructure and IAM for granular access control.
 
